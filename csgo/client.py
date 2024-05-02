@@ -223,7 +223,12 @@ class CSGOClient(GameCoordinator, FeatureBase):
                             'client_launcher': self.launcher,
                             })
                     else:  # GCClientLauncherType.DEFAULT
-                        self.send(EGCBaseClientMsg.EMsgGCClientHello)
+                        self.send(
+                            EGCBaseClientMsg.EMsgGCClientHello,
+                            {
+                                'version': 2000202
+                            },
+                        )
 
                     self.wait_event('ready', timeout=3 + (2**n))
                     n = min(n + 1, 4)
