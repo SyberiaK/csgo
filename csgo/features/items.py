@@ -1,13 +1,19 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from csgo.enums import ECsgoGCMsg
 
-class Items(object):
-    def __init__(self):
-        super(Items, self).__init__()
+if TYPE_CHECKING:
+    from csgo.client import CSGOClient
 
+
+class Items:
+    def __init__(self: CSGOClient):
         # register our handlers
         self.on(ECsgoGCMsg.EMsgGCCStrike15_v2_Client2GCEconPreviewDataBlockResponse, self.__handle_preview_data_block)
 
-    def request_preview_data_block(self, s, a, d, m):
+    def request_preview_data_block(self: CSGOClient, s: int, a: int, d: int, m: int):
         """
         Request item preview data block
 
@@ -35,12 +41,10 @@ class Items(object):
         :type message: proto message
 
         """
-        self.send(ECsgoGCMsg.EMsgGCCStrike15_v2_Client2GCEconPreviewDataBlockRequest, {
-                    'param_s': s,
-                    'param_a': a,
-                    'param_d': d,
-                    'param_m': m,
-                 })
+        self.send(ECsgoGCMsg.EMsgGCCStrike15_v2_Client2GCEconPreviewDataBlockRequest, {'param_s': s,
+                                                                                       'param_a': a,
+                                                                                       'param_d': d,
+                                                                                       'param_m': m, })
 
-    def __handle_preview_data_block(self, message):
+    def __handle_preview_data_block(self: CSGOClient, message):
         self.emit("item_data_block", message.iteminfo)

@@ -1,5 +1,9 @@
 from enum import IntEnum
 
+
+__all__ = ['ESOType', 'EXPBonusFlag']
+
+
 class ESOType(IntEnum):
     CSOEconItem = 1
     CSOPersonaDataPublic = 2
@@ -14,24 +18,12 @@ class ESOType(IntEnum):
 
 
 class EXPBonusFlag(IntEnum):
-    EarnedXpThisPeriod         = 1 << 0
-    FirstReward                = 1 << 1
+    EarnedXpThisPeriod = 1 << 0
+    FirstReward = 1 << 1
     Msg_YourReportGotConvicted = 1 << 2
     Msg_YouPartiedWithCheaters = 1 << 3
-    PrestigeEarned             = 1 << 4
-    ChinaGovernmentCert        = 1 << 5
-    OverwatchBonus             = 1 << 28
-    BonusBoostConsumed         = 1 << 29
-    ReducedGain                = 1 << 30
-
-
-# Do not remove
-from sys import modules
-from enum import EnumMeta
-
-__all__ = [obj.__name__
-           for obj in modules[__name__].__dict__.values()
-           if obj.__class__ is EnumMeta and obj.__name__ != 'IntEnum'
-           ]
-
-del modules, EnumMeta
+    PrestigeEarned = 1 << 4
+    ChinaGovernmentCert = 1 << 5
+    OverwatchBonus = 1 << 28
+    BonusBoostConsumed = 1 << 29
+    ReducedGain = 1 << 30

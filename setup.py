@@ -16,11 +16,7 @@ install_requires = [
     'gevent-eventemitter>=2.1',
     'gevent>=1.3.0',
     'protobuf>=3.0.0',
-    'six>=1.10',
 ]
-
-if sys.version_info < (3, 4):
-    install_requires.append('enum34>=1.0.4')
 
 setup(
     name='csgo',
@@ -38,14 +34,13 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Natural Language :: English',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.4',
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
+        'Programming Language :: Python :: 3.13',
     ],
-    keywords='valve steam steamid api webapi csgo global offensive',
+    keywords='valve steam steamid api webapi csgo global offensive cs cs2',
     packages=['csgo'] + ['csgo.'+x for x in find_packages(where='csgo')],
     install_requires=install_requires,
     zip_safe=True,

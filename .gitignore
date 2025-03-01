@@ -6,3 +6,6 @@ dist
 
 csgo/protobufs/*.proto
 credentials/*
+
+.venv/
+.idea/

@@ -1,8 +1,11 @@
 import re
 
-dictionary = "ABCDEFGHJKLMNOPQRSTUVWXYZabcdefhijkmnopqrstuvwxyz23456789"
+dictionary = 'ABCDEFGHJKLMNOPQRSTUVWXYZabcdefhijkmnopqrstuvwxyz23456789'
+DICTIONARY_LENGTH = len(dictionary)
+CODE_PATTERN = re.compile(r'CSGO(-[{%s}]{5}){5}$' % dictionary)
 
-_bitmask64 = 2**64 - 1
+_bitmask64 = 2 ** 64 - 1
+
 
 def _swap_endianness(number):
     result = 0
@@ -12,8 +15,10 @@ def _swap_endianness(number):
 
     return result
 
+
 def decode(code):
-    """Decodes a match share code
+    """
+    Decodes a match share code
 
     :param code: match share code (e.g. ``CSGO-Ab1cD-xYz23-7bcD9-uVZ23-12aBc``)
     :type code: str
@@ -28,22 +33,21 @@ def decode(code):
          'token': 0
          }
     """
-    if not re.match(r'^(CSGO)?(-?[%s]{5}){5}$' % dictionary, code):
-        raise ValueError("Invalid share code")
+    if not CODE_PATTERN.match(code):
+        raise ValueError('Invalid share code')
 
-    code = re.sub('CSGO\-|\-', '', code)[::-1]
+    code = code.removeprefix('CSGO').replace('-', '')
 
-    a = 0
-    for c in code:
-        a = a*len(dictionary) + dictionary.index(c)
+    num = 0
+    for c in reversed(code):
+        num = num * DICTIONARY_LENGTH + dictionary.index(c)
 
-    a = _swap_endianness(a)
+    num = _swap_endianness(num)
 
-    return {
-        'matchid':   a        & _bitmask64,
-        'outcomeid': a >> 64  & _bitmask64,
-        'token':     a >> 128 & 0xFFFF
-    }
+    return {'matchid': num & _bitmask64,
+            'outcomeid': num >> 64 & _bitmask64,
+            'token': num >> 128 & 0xFFFF}
+
 
 def encode(matchid, outcomeid, token):
     """Encodes (matchid, outcomeid, token) to match share code
@@ -57,11 +61,11 @@ def encode(matchid, outcomeid, token):
     :return: match share code (e.g. ``CSGO-Ab1cD-xYz23-7bcD9-uVZ23-12aBc``)
     :rtype: str
     """
-    a = _swap_endianness((token << 128) | (outcomeid << 64) | matchid)
+    num = _swap_endianness((token << 128) | (outcomeid << 64) | matchid)
 
     code = ''
     for _ in range(25):
-        a, r = divmod(a, len(dictionary))
+        num, r = divmod(num, DICTIONARY_LENGTH)
         code += dictionary[r]
 
-    return "CSGO-%s-%s-%s-%s-%s" % (code[:5], code[5:10], code[10:15], code[15:20], code[20:])
+    return f'CSGO-{code[:5]}-{code[5:10]}-{code[10:15]}-{code[15:20]}-{code[20:]}'

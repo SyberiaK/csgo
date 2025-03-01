@@ -1,6 +1,14 @@
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from csgo.enums import ECsgoGCMsg
 
-class Player(object):
+if TYPE_CHECKING:
+    from csgo.client import CSGOClient
+
+
+class Player:
     ranks_map = {
         0: "Not Ranked",
         1: "Silver I",
@@ -21,7 +29,7 @@ class Player(object):
         16: "Legendary Eagle Master",
         17: "Supreme Master First Class",
         18: "The Global Elite"
-        }
+    }
     """:class:`dict` mapping rank id to name"""
     wingman_ranks_map = ranks_map
     """:class:`dict` mapping wingman rank id to name"""
@@ -41,7 +49,7 @@ class Player(object):
         12: "Timber Wolf",
         13: "Ember Wolf",
         14: "Wildfire Wolf",
-        15: "The Howling Alpha",
+        15: "The Howling Alpha"
     }
     """:class:`dict` mapping dangerzone rank id to name"""
     levels_map = {
@@ -86,17 +94,14 @@ class Player(object):
         38: 'Lieutenant General',
         39: 'General',
         40: 'Global General'
-        }
+    }
     """:class:`dict` mapping level to name"""
 
-
-    def __init__(self):
-        super(Player, self).__init__()
-
+    def __init__(self: CSGOClient):
         # register our handlers
         self.on(ECsgoGCMsg.EMsgGCCStrike15_v2_PlayersProfile, self.__handle_player_profile)
 
-    def request_player_profile(self, account_id, request_level=32):
+    def request_player_profile(self: CSGOClient, account_id, request_level: int = 32):
         """
         Request player profile
 
@@ -111,11 +116,12 @@ class Player(object):
         :type message: proto message
 
         """
-        self.send(ECsgoGCMsg.EMsgGCCStrike15_v2_ClientRequestPlayersProfile, {
-                    'account_id': account_id,
-                    'request_level': request_level,
-                 })
+        self.send(ECsgoGCMsg.EMsgGCCStrike15_v2_ClientRequestPlayersProfile, {'account_id': account_id,
+                                                                              'request_level': request_level,
+                                                                              })
 
-    def __handle_player_profile(self, message):
-        if message.account_profiles:
-            self.emit("player_profile", message.account_profiles[0])
+    def __handle_player_profile(self: CSGOClient, message):
+        if not message.account_profiles:
+            return
+
+        self.emit('player_profile', message.account_profiles[0])

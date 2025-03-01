@@ -1,13 +1,12 @@
-"""
-Various utility function for dealing with messages.
+"""Various utility function for dealing with messages."""
+from __future__ import annotations
 
-"""
+
+from google.protobuf.reflection import GeneratedProtocolMessageType
 
 from csgo.enums import EGCBaseClientMsg, ECsgoGCMsg, EGCItemMsg
-from csgo.protobufs import gcsdk_gcmessages_pb2
-from csgo.protobufs import cstrike15_gcmessages_pb2
-from csgo.protobufs import econ_gcmessages_pb2
-from csgo.protobufs import base_gcmessages_pb2
+from csgo.protobufs import (gcsdk_gcmessages_pb2, cstrike15_gcmessages_pb2,
+                            econ_gcmessages_pb2, base_gcmessages_pb2)
 
 
 def get_emsg_enum(emsg):
@@ -19,10 +18,7 @@ def get_emsg_enum(emsg):
     :return: Enum if found, `emsg` if not
     :rtype: Enum, :class:`int`
     """
-    for enum in (EGCBaseClientMsg,
-                 ECsgoGCMsg,
-                 EGCItemMsg,
-                 ):
+    for enum in EGCBaseClientMsg, ECsgoGCMsg, EGCItemMsg:
         try:
             return enum(emsg)
         except ValueError:
@@ -30,7 +26,8 @@ def get_emsg_enum(emsg):
 
     return emsg
 
-def find_proto(emsg):
+
+def find_proto(emsg) -> GeneratedProtocolMessageType | None:
     """
     Attempts to find the protobuf message for a given Enum
 
@@ -40,28 +37,22 @@ def find_proto(emsg):
     """
 
     if type(emsg) is int:
-        return None
+        return
 
-    proto = _proto_map_why_cant_we_name_things_properly.get(emsg, None)
-
-    if proto is not None:
+    if proto := _proto_map_why_cant_we_name_things_properly.get(emsg):
         return proto
 
-    for module in (gcsdk_gcmessages_pb2,
-                   cstrike15_gcmessages_pb2,
-                   econ_gcmessages_pb2,
-                   base_gcmessages_pb2,
-                  ):
-
+    for module in (gcsdk_gcmessages_pb2, cstrike15_gcmessages_pb2,
+                   econ_gcmessages_pb2, base_gcmessages_pb2):
         proto = getattr(module, emsg.name.replace("EMsg", "CMsg"), None)
 
         if proto is None:
             proto = getattr(module, emsg.name.replace("EMsgGC", "CMsg"), None)
 
-        if proto is not None:
-            break
+        if proto:
+            return proto
 
-    return proto
+    return proto  # should always be `None`
 
 
 _proto_map_why_cant_we_name_things_properly = {
