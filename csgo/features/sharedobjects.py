@@ -36,7 +36,6 @@ Even when removed, there is object instance returned, usually only with the key 
 import logging
 from eventemitter import EventEmitter
 
-from csgo.client import CSGOClient
 from csgo.enums import EGCBaseClientMsg, ESOMsg, ESOType
 from csgo.protobufs import base_gcmessages_pb2 as _gc_base
 from csgo.protobufs import cstrike15_gcmessages_pb2 as _gc_cstrike
@@ -118,6 +117,8 @@ class SOCache(EventEmitter, dict):
     ESOType = ESOType  #: expose ESOType
 
     def __init__(self, csgo_client, logger_name):
+        from csgo.client import CSGOClient
+
         super().__init__()
 
         self._LOG = logging.getLogger(logger_name if logger_name else self.__class__.__name__)
